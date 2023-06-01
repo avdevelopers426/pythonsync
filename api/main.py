@@ -16,7 +16,7 @@ def result():
 	#form_data = request.get_json()
 	
 	chrome_options = Options()
-	#chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
+	chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
 
 	# Create a new instance of the Chrome driver
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
