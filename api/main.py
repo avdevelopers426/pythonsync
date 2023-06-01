@@ -74,9 +74,9 @@ def result():
 
 #APP = result()
 
-if __name__ == '__main__':
+#if __name__ == '__main__':
     # APP.run(host='0.0.0.0', port=5000, debug=True)
-    app.run(debug=True,host='pythonsync.onrender.com')
+    #app.run(debug=True,host='pythonsync.onrender.com')
 
 
 # Set the path to the chromedriver executable
