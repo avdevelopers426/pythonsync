@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 def result():
 
-	form_data = request.get_json()
+	#form_data = request.get_json()
 	
 	chrome_options = Options()
 	#chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
