@@ -76,7 +76,7 @@ def result():
 
 if __name__ == '__main__':
     # APP.run(host='0.0.0.0', port=5000, debug=True)
-    app.run(debug=True,port=2000)
+    app.run(debug=True)
 
 
 # Set the path to the chromedriver executable
