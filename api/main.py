@@ -5,7 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 import time
-from flask import Flask, request
+#from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 def result():
 
-	form_data = request.get_json()
+	#form_data = request.get_json()
 	
 	chrome_options = Options()
 	#chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
