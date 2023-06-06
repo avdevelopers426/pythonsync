@@ -8,7 +8,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
 import time
-from flask import Flask,request
+from flask import Flask,request,jsonify
 
 app = Flask(__name__)
 
@@ -20,7 +20,7 @@ def result():
 	
 	
 	chrome_options = Options()
-	chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
+	#chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
 
 	# Create a new instance of the Chrome driver
 	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
@@ -52,6 +52,8 @@ def result():
 	grain = driver.find_element(By.ID, "settings.grain")
 	grain.find_element(By.XPATH, "..").click()
 	#elements2.click()
+	input_field5 = Select(form.find_element(By.NAME, "stocks[0].grainDirection"))
+	input_field5.select_by_value("h")
 
 	r_panel_values = data.get('r_panel', [])
 
@@ -75,20 +77,28 @@ def result():
 		input_field3 = form.find_element(By.NAME, "requirements["+str(x)+"].count")
 		input_field3.send_keys(panel.get('r_qty'))
 
-		input_field4 = Select(form.find_element(By.NAME, "requirements["+str(x)+"].grainDirection"))
-		input_field4.select_by_value(panel.get('grainDirection'))
+		if panel.get('grainDirection')!='select':
+			input_field4 = Select(form.find_element(By.NAME, "requirements["+str(x)+"].grainDirection"))
+			input_field4.select_by_value(panel.get('grainDirection'))
+
 		if len(r_panel_values)!=x+1:
 			driver.execute_script(js_code)
 		x=x+1;
 
-	#time.sleep(50)
+	
+	time.sleep(2)
+
 	try:
 		form.submit()
 	except StaleElementReferenceException:
-		return "error";
+		print("fff")
+		data = {'message': 'form not submited','status': 'fail'};
+		response = jsonify(data);
+		response.status_code = 200;
+		return response;
 	# Find the input fields within the form and fill in the desired values
 	
-	
+	#time.sleep(50)
 
 	
 	#driver.implicitly_wait(500) 
@@ -105,13 +115,52 @@ def result():
 	try:
 		target_div = driver.find_element(By.CSS_SELECTOR, ".tab-pane.active > .card-body > table")
 	except NoSuchElementException:
-		return "error";
+		try:
+		    # Find the element using a specific selector
+		    element = driver.find_element(By.CSS_SELECTOR, "#stocksTable tr:last-child .error")
+		    # If the element is found, print a success message
+		    
+		    #print(element.get_attribute("innerHTML"))
+		    #print("Abc")
+		    data = {'message': element.get_attribute("innerHTML"),'status': 'fail'};
+		    response = jsonify(data);
+		    response.status_code = 200;
+		    return response;
+		except NoSuchElementException:
+		    # If the element is not found, print an error message
+		    print("error2.1")
+		    #return "error2.1";
+		try:
+			rows = driver.find_elements(By.CSS_SELECTOR, "#planReqTable .error")
+			finali = '';
+			for row in rows:
+				if row.text.strip()!='':
+					finali = row.text
+				print(row.text)
+				print("row.text")
+			data = {'message':finali,'status': 'fail'};
+			response = jsonify(data);
+			response.status_code = 200;
+			return response;
+		except NoSuchElementException:
+			print("error2.2")	
+		#return "error2";
+		data = {'message': 'error on response','status': 'fail'};
+		response = jsonify(data);
+		response.status_code = 200;
+		return response;
 
+	#time.sleep(50)
 	div_html = target_div.get_attribute("outerHTML")
+	data = {'message': div_html,'status': 'success'};
+	response = jsonify(data);
+	response.status_code = 200;
+	return response;
 	#print(div_html)
-	if div_html:
-		return div_html;
+	#if div_html:
+	#	return div_html;
 
+	
 	"""if len(target_div) == 0:
 		return "error";
 
@@ -125,9 +174,9 @@ def result():
 
 #APP = result()
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
     # APP.run(host='0.0.0.0', port=5000, debug=True)
-    #app.run(debug=True,host='pythonsync.onrender.com')
+    app.run(debug=True,port=2000)
 
 
 # Set the path to the chromedriver executable
