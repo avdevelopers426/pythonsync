@@ -34,10 +34,10 @@ def result():
 	chrome_options.add_argument('--headless')
 	chrome_options.add_argument('--no-sandbox')
 	chrome_options.add_argument('--disable-dev-shm-usage')
-	chrome_options.binary_location = '/usr/bin/google-chrome'
+	#chrome_options.binary_location = '/usr/bin/google-chrome'
 	#chrome_options.add_argument('--no-sandbox')
 	#chrome_options.binary_location = '/usr/bin/google-chrome'
-	driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=chrome_options)
+	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 	#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 	#firefox_binary = '/path/to/firefox-binary'  # Replace with the correct Firefox binary path
 	#driver = webdriver.Firefox(firefox_binary=firefox_binary)
