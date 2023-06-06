@@ -1,3 +1,4 @@
+#from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -7,8 +8,11 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
+#from webdriver_manager.firefox import GeckoDriverManager
 import time
 from flask import Flask,request,jsonify
+
+
 
 app = Flask(__name__)
 
@@ -19,11 +23,25 @@ def result():
 	print(data['a_length'])
 	
 	
-	chrome_options = Options()
+	#chrome_options = Options()
 	#chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
 
+
 	# Create a new instance of the Chrome driver
-	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+	#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+
+	chrome_options = Options()
+	chrome_options.add_argument('--headless')
+	chrome_options.add_argument('--no-sandbox')
+	chrome_options.add_argument('--disable-dev-shm-usage')
+	chrome_options.binary_location = '/usr/bin/google-chrome'
+	#chrome_options.add_argument('--no-sandbox')
+	#chrome_options.binary_location = '/usr/bin/google-chrome'
+	driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=chrome_options)
+	#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+	#firefox_binary = '/path/to/firefox-binary'  # Replace with the correct Firefox binary path
+	#driver = webdriver.Firefox(firefox_binary=firefox_binary)
+	#driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
 
 	# Define the URL of the web page
 	url = "https://www.opticutter.com/cut-list-optimizer"
@@ -176,7 +194,7 @@ def result():
 
 if __name__ == '__main__':
     # APP.run(host='0.0.0.0', port=5000, debug=True)
-    app.run(debug=True,port=2000)
+    app.run(debug=True,host='161.35.21.17',port=2000)
 
 
 # Set the path to the chromedriver executable
