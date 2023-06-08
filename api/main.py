@@ -9,6 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
 #from webdriver_manager.firefox import GeckoDriverManager
+import json
 import time
 from flask import Flask,request,jsonify
 
@@ -29,15 +30,21 @@ def result():
 
 	# Create a new instance of the Chrome driver
 	#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+	chrome_options = webdriver.ChromeOptions()
+	chrome_options.add_argument('--no-sandbox')
+	chrome_options.add_argument('--window-size=1920,1080')
+	chrome_options.add_argument('--headless')
+	chrome_options.add_argument('--disable-gpu')
+	chrome_options.add_argument('--disable-dev-shm-usage')  
+	driver = webdriver.Chrome(chrome_options=chrome_options)
 
-	chrome_options = Options()
+	'''chrome_options = Options()
 	chrome_options.add_argument('--headless')
 	chrome_options.add_argument('--no-sandbox')
 	chrome_options.add_argument('--disable-dev-shm-usage')
-	#chrome_options.binary_location = '/usr/bin/google-chrome'
-	#chrome_options.add_argument('--no-sandbox')
-	#chrome_options.binary_location = '/usr/bin/google-chrome'
-	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+	chrome_options.binary_location = '/usr/bin/google-chrome'
+	driver = webdriver.Chrome(executable_path='/usr/local/bin/chromedriver', options=chrome_options)'''
+
 	#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 	#firefox_binary = '/path/to/firefox-binary'  # Replace with the correct Firefox binary path
 	#driver = webdriver.Firefox(firefox_binary=firefox_binary)
@@ -130,8 +137,30 @@ def result():
 	#driver.implicitly_wait(10)  # Wait for 5 seconds (adjust as needed)
 	#driver.page_source
 	#time.sleep(50)
+	my_array = {}
 	try:
 		target_div = driver.find_element(By.CSS_SELECTOR, ".tab-pane.active > .card-body > table")
+		rows = driver.find_elements(By.CSS_SELECTOR, ".tab-pane.active > .card-body > table .w-40")
+		y=0;
+		for row in rows:
+			inner_elements = row.find_elements(By.CSS_SELECTOR,".m-1")
+			
+			#print(row.find_element(By.XPATH, "..").find_element(By.CSS_SELECTOR, "td:nth-child(2)").text)
+			parendiv = row.find_element(By.XPATH, "..")
+			myucsila = "Table "+parendiv.find_element(By.CSS_SELECTOR, "td:nth-child(1) .text-xlarge").text + " "+parendiv.find_element(By.CSS_SELECTOR, "td:nth-child(2) .text-xlarge").text
+			x=1
+			tempmy_array =[]
+			for inner_element in inner_elements:
+				if x!=1:
+					finali = inner_element.find_element(By.CSS_SELECTOR, ".float-right").text.replace(",", "")+" x "+inner_element.find_element(By.CSS_SELECTOR, "span.text-nowrap").text.replace(",", "")
+					#print(finali)
+					#print("row.text"+str(y))
+					#my_array.insert(y, finali)
+					tempmy_array.append(finali);
+					#my_array[y].append(finali);
+				x=x+1
+			my_array[myucsila]=tempmy_array;
+			y=y+1
 	except NoSuchElementException:
 		try:
 		    # Find the element using a specific selector
@@ -169,8 +198,9 @@ def result():
 		return response;
 
 	#time.sleep(50)
+	print(my_array)
 	div_html = target_div.get_attribute("outerHTML")
-	data = {'message': div_html,'status': 'success'};
+	data = {'message': div_html,'status': 'success','my_array':json.dumps(my_array)};
 	response = jsonify(data);
 	response.status_code = 200;
 	return response;
@@ -194,7 +224,8 @@ def result():
 
 if __name__ == '__main__':
     # APP.run(host='0.0.0.0', port=5000, debug=True)
-    app.run(debug=True,host='161.35.21.17',port=2000)
+    #app.run()
+    app.run(debug=False,host='161.35.21.17',port=2000)
 
 
 # Set the path to the chromedriver executable
@@ -211,3 +242,4 @@ if __name__ == '__main__':
 
 # Close the browser
 #driver.quit()
+
