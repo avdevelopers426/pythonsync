@@ -23,20 +23,21 @@ def result():
 	data = request.json
 	print(data['a_length'])
 	
-	
-	#chrome_options = Options()
-	#chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
-
+	return "sss";
+	chrome_options = Options()
+	chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
+	chrome_options.add_argument('--no-sandbox')
 
 	# Create a new instance of the Chrome driver
-	#driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-	chrome_options = webdriver.ChromeOptions()
-	chrome_options.add_argument('--no-sandbox')
-	chrome_options.add_argument('--window-size=1920,1080')
-	chrome_options.add_argument('--headless')
-	chrome_options.add_argument('--disable-gpu')
-	chrome_options.add_argument('--disable-dev-shm-usage')  
-	driver = webdriver.Chrome(chrome_options=chrome_options)
+	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+	#chrome_options = webdriver.ChromeOptions()
+
+	#chrome_options.add_argument('--no-sandbox')
+	#chrome_options.add_argument('--window-size=1920,1080')
+	#chrome_options.add_argument('--headless')
+	#chrome_options.add_argument('--disable-gpu')
+	#chrome_options.add_argument('--disable-dev-shm-usage')  
+	#driver = webdriver.Chrome(chrome_options=chrome_options)
 
 	'''chrome_options = Options()
 	chrome_options.add_argument('--headless')
@@ -111,7 +112,7 @@ def result():
 		x=x+1;
 
 	
-	time.sleep(2)
+	time.sleep(3)
 
 	try:
 		form.submit()
@@ -147,7 +148,7 @@ def result():
 			
 			#print(row.find_element(By.XPATH, "..").find_element(By.CSS_SELECTOR, "td:nth-child(2)").text)
 			parendiv = row.find_element(By.XPATH, "..")
-			myucsila = "Table "+parendiv.find_element(By.CSS_SELECTOR, "td:nth-child(1) .text-xlarge").text + " "+parendiv.find_element(By.CSS_SELECTOR, "td:nth-child(2) .text-xlarge").text
+			myucsila = "Schita "+parendiv.find_element(By.CSS_SELECTOR, "td:nth-child(1) .text-xlarge").text + " "+parendiv.find_element(By.CSS_SELECTOR, "td:nth-child(2) .text-xlarge").text
 			x=1
 			tempmy_array =[]
 			for inner_element in inner_elements:
