@@ -83,8 +83,8 @@ def result():
 	input_field2 = form.find_element(By.NAME, "stocks[0].width")
 	input_field2.send_keys(data['a_width'])
 
-	input_field3 = form.find_element(By.NAME, "stocks[0].count")
-	input_field3.send_keys(data['a_qty'])
+	#input_field3 = form.find_element(By.NAME, "stocks[0].count")
+	#input_field3.send_keys(data['a_qty'])
 
 	input_field4 = form.find_element(By.NAME, "settings.kerf")
 	input_field4.send_keys(data['cut_width'])
@@ -221,7 +221,8 @@ def result():
 	#time.sleep(50)
 	print(my_array)
 	div_html = target_div.get_attribute("outerHTML")
-	data = {'message': div_html,'status': 'success','my_array':json.dumps(my_array)};
+	totalRow = driver.find_element(By.CSS_SELECTOR, ".totalRow .text-right").text
+	data = {'message': div_html,'status': 'success','my_array':json.dumps(my_array),'totalRow':totalRow};
 	response = jsonify(data);
 	response.status_code = 200;
 	driver.quit()
