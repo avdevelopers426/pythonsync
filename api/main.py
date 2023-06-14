@@ -1,5 +1,6 @@
 #from pyvirtualdisplay import Display
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -23,13 +24,21 @@ def result():
 	data = request.json
 	print(data['a_length'])
 	
-	return "sss";
-	chrome_options = Options()
-	chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
-	chrome_options.add_argument('--no-sandbox')
-
-	# Create a new instance of the Chrome driver
-	driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+	try:
+		#return "sss";
+		chrome_options = Options()
+		chrome_options.add_argument('--headless')  # Run Chrome in headless mode (without opening the browser window)
+		chrome_options.add_argument('--no-sandbox')
+		chrome_options.add_argument('--disable-gpu')
+		chrome_options.add_argument('--disable-dev-shm-usage')  
+		# Create a new instance of the Chrome driver
+		driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+	except WebDriverException as e:
+		data = {'message': 'form not submit','status': 'fail'};
+		response = jsonify(data);
+		response.status_code = 200;
+		driver.quit()
+		return response;
 	#chrome_options = webdriver.ChromeOptions()
 
 	#chrome_options.add_argument('--no-sandbox')
@@ -58,7 +67,14 @@ def result():
 	driver.get(url)
 
 	# Find the form element using appropriate selectors (e.g., ID, class, etc.)
-	form = driver.find_element(By.ID, "planForm")
+	try:
+		form = driver.find_element(By.ID, "planForm")
+	except NoSuchElementException:
+		data = {'message': 'Recalculate Please','status': 'fail'};
+		response = jsonify(data);
+		response.status_code = 200;
+		driver.quit()
+		return response;
 
 	# Find the input fields within the form and fill in the desired values
 	input_field1 = form.find_element(By.NAME, "stocks[0].length")
@@ -121,6 +137,7 @@ def result():
 		data = {'message': 'form not submited','status': 'fail'};
 		response = jsonify(data);
 		response.status_code = 200;
+		driver.quit()
 		return response;
 	# Find the input fields within the form and fill in the desired values
 	
@@ -173,6 +190,7 @@ def result():
 		    data = {'message': element.get_attribute("innerHTML"),'status': 'fail'};
 		    response = jsonify(data);
 		    response.status_code = 200;
+		    driver.quit()
 		    return response;
 		except NoSuchElementException:
 		    # If the element is not found, print an error message
@@ -189,6 +207,7 @@ def result():
 			data = {'message':finali,'status': 'fail'};
 			response = jsonify(data);
 			response.status_code = 200;
+			driver.quit()
 			return response;
 		except NoSuchElementException:
 			print("error2.2")	
@@ -196,6 +215,7 @@ def result():
 		data = {'message': 'error on response','status': 'fail'};
 		response = jsonify(data);
 		response.status_code = 200;
+		driver.quit()
 		return response;
 
 	#time.sleep(50)
@@ -204,6 +224,7 @@ def result():
 	data = {'message': div_html,'status': 'success','my_array':json.dumps(my_array)};
 	response = jsonify(data);
 	response.status_code = 200;
+	driver.quit()
 	return response;
 	#print(div_html)
 	#if div_html:
